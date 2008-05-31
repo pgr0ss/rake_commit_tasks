@@ -14,11 +14,19 @@ namespace :svn do
   task :add do
     %x[svn st].split(/\n/).each do |line|
       trimmed_line = line.delete('?').lstrip
-      if line[0,1] =~ /\?/
+      if new_file?(line) && !conflict?(line)
         %x[svn add #{trimmed_line}]
         puts %[added #{trimmed_line}]
       end
     end
+  end
+  
+  def new_file?(line)
+    line[0,1] =~ /\?/
+  end
+  
+  def conflict?(line)
+    line =~ /\.r\d+$/ || line =~ /\.mine$/
   end
   
   task :delete do
