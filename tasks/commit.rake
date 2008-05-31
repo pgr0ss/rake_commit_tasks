@@ -7,7 +7,7 @@ task :pc => ['svn:add', 'svn:delete', 'svn:up', :default, 'svn:st']
 
 desc "Run to check in"
 task :commit => :pc do
-  if files_to_check_in?
+  if files_to_check_in? && ok_to_check_in?
     commit_pair = retrieve_saved_data "pair"
     commit_message = retrieve_saved_data "message"
     command = %[svn ci -m "#{commit_pair.chomp} - #{commit_message.chomp}"]
@@ -43,4 +43,12 @@ def ok_to_check_in?
   return true unless broken_build?
   input = Readline.readline("\nThe build is currently broken.  Are you sure you want to check in? (y/n): ")
   return input.downcase[0,1] == "y"
+end
+
+def broken_build?
+  return false unless self.class.const_defined? :CCRB_RSS
+  build_rss = open(CCRB_RSS).read
+  doc = REXML::Document.new(build_rss)
+  build_title = REXML::XPath.first(doc, '//rss/channel/item/title').text
+  build_title.include? "failed"
 end
