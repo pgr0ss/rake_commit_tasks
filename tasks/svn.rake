@@ -4,7 +4,11 @@ namespace :svn do
   end
 
   task :up do
-    puts %x[svn up]
+    status = %x[svn up]
+    puts status
+    status.each do |line|
+      raise "SVN conflict detected. Please resolve conflicts before proceeding." if line =~ /^C\s+/
+    end
   end
 
   task :add do
