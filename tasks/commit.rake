@@ -40,15 +40,31 @@ def retrieve_saved_data attribute
 end
 
 def ok_to_check_in?
-  return true unless broken_build?
-  input = Readline.readline("\nThe build is currently broken.  Are you sure you want to check in? (y/n): ")
-  return input.downcase[0,1] == "y"
+  return true unless self.class.const_defined?(:CCRB_RSS)
+  case build_status
+  when :passing
+    true
+  when :failing
+    accept?("The build is currently broken.") 
+  when :cannot_connect
+    accept?("Cannot read cruisecontrol.rb information")
+  end
 end
 
-def broken_build?
-  return false unless self.class.const_defined? :CCRB_RSS
-  build_rss = open(CCRB_RSS).read
-  doc = REXML::Document.new(build_rss)
-  build_title = REXML::XPath.first(doc, '//rss/channel/item/title').text
-  build_title.include? "failed"
+def build_status
+  begin
+    build_rss = open(CCRB_RSS).read
+    doc = REXML::Document.new(build_rss)
+    build_title = REXML::XPath.first(doc, '//rss/channel/item/title').text
+    return build_title.include?("failed") ? :failing : :passing
+  rescue Exception => e
+    puts "\n", e.message
+    return :cannot_connect
+  end
+end
+
+def accept?(message)
+  puts "\n", message
+  input = Readline.readline("Are you sure you want to check in? (y/n): ")
+  return input.downcase[0,1] == "y"
 end
