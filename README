@@ -1,0 +1,31 @@
+= rake_commit_tasks
+
+This plugin contains a set of rake tasks for checking your project into subversion.  The most important is:
+
+  rake commit
+
+which:
+
+  1. Add new files to subversion
+  2. Delete missing files from subversion
+  3. svn update
+  4. Run the default rake task (which should run your tests)
+  5. Displays svn status
+  6. Check cruisecontrol.rb to see if the build is passing
+  7. Prompt to check in
+
+
+The first version started with the code posted at Jay Field's Blog: http://blog.jayfields.com/2006/12/ruby-rake-commit.html
+Improvements have been added in from several more projects.
+
+== Installation
+
+  cd vendor/plugins
+  git clone git://github.com/pgr0ss/rake_commit_tasks.git
+  rake commit
+
+== Customization
+
+
+Copyright (c) 2008 [name of plugin creator], released under the MIT license
+pgmac:~/pro
