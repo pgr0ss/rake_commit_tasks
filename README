@@ -26,6 +26,9 @@ Improvements have been added in from several more projects.
 
 == Customization
 
+If you want the build to check your cruisecontrol.rb instance and prompt you 
+before checking in on a broken build, set CCRB to the location of the RSS feed.
 
-Copyright (c) 2008 [name of plugin creator], released under the MIT license
-pgmac:~/pro
+For example, in your Rakefile:
+
+  CCRB_RSS = 'http://example.com:3333/projects.rss'
