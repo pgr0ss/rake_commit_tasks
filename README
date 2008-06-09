@@ -20,8 +20,7 @@ Improvements have been added in from several more projects.
 
 == Installation
 
-  cd vendor/plugins
-  git clone git://github.com/pgr0ss/rake_commit_tasks.git
+  git clone git://github.com/pgr0ss/rake_commit_tasks.git vendor/plugins/rake_commit_tasks
   rake commit
 
 == Customization
