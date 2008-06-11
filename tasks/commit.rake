@@ -21,7 +21,7 @@ def files_to_check_in?
 end
 
 def retrieve_saved_data attribute
-  data_path = File.expand_path(File.dirname(__FILE__) + "/#{attribute}.data")
+  data_path = File.expand_path(Dir.tmpdir + "/#{attribute}.data")
   `touch #{data_path}` unless File.exist? data_path
   saved_data = File.read(data_path)
 
