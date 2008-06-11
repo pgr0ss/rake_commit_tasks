@@ -26,7 +26,7 @@ Improvements have been added in from several more projects.
 == Customization
 
 If you want the build to check your cruisecontrol.rb instance and prompt you 
-before checking in on a broken build, set CCRB to the location of the RSS feed.
+before checking in on a broken build, set CCRB_RSS to the location of the RSS feed.
 
 For example, in your Rakefile:
 
