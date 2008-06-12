@@ -15,7 +15,7 @@ namespace :svn do
     %x[svn st].split(/\n/).each do |line|
       trimmed_line = line.delete('?').lstrip
       if new_file?(line) && !conflict?(line)
-        %x[svn add #{trimmed_line}]
+        %x[svn add '#{trimmed_line}']
         puts %[added #{trimmed_line}]
       end
     end
@@ -33,7 +33,7 @@ namespace :svn do
     %x[svn st].split(/\n/).each do |line|
       trimmed_line = line.delete('!').lstrip
       if line[0,1] =~ /\!/
-        %x[svn up #{trimmed_line} && svn rm #{trimmed_line}]
+        %x[svn up '#{trimmed_line}' && svn rm '#{trimmed_line}']
         puts %[removed #{trimmed_line}]
       end
     end
