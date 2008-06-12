@@ -1,0 +1,12 @@
+Started with the code at Jay Field's blog: http://blog.jayfields.com/2006/12/ruby-rake-commit.html
+
+== Additions
+
+* Don't prompt to check in if nothing has changed
+* Use readline instead of gets so you can use the arrow keys and backspace
+* Break if there are conflicts in svn up
+* Don’t add result of conflicts to subversion (.mine, etc)
+* Check cc.rb and prompt if build is failing
+* Store previous pair and message in system temp path instead of source tree
+* Properly handle missing directories by first restoring them and then svn removing them
+* Handle file names with spaces by quoting the svn commands
