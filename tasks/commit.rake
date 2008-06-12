@@ -1,6 +1,7 @@
 require 'readline'
 require 'open-uri'
 require 'rexml/document'
+require 'tmpdir'
 
 desc "Run before checking in"
 task :pc => ['svn:add', 'svn:delete', 'svn:up', :default, 'svn:st']
@@ -65,6 +66,9 @@ end
 
 def accept?(message)
   puts "\n", message
-  input = Readline.readline("Are you sure you want to check in? (y/n): ")
-  return input.downcase[0,1] == "y"
+  input = ""
+  while (input.strip.empty?)
+    input = Readline.readline("Are you sure you want to check in? (y/n): ")
+  end
+  return input.strip.downcase[0,1] == "y"
 end
