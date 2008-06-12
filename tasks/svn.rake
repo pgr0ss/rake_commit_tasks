@@ -33,7 +33,7 @@ namespace :svn do
     %x[svn st].split(/\n/).each do |line|
       trimmed_line = line.delete('!').lstrip
       if line[0,1] =~ /\!/
-        %x[svn rm #{trimmed_line}]
+        %x[svn up #{trimmed_line} && svn rm #{trimmed_line}]
         puts %[removed #{trimmed_line}]
       end
     end
