@@ -31,7 +31,7 @@ class SvnRakeTest < Test::Unit::TestCase
   end
   
   test "svn:add adds new files and displays message" do
-    Kernel.stubs(:`).with("svn st").returns("?      new_file\n?      new_file2\n")
+    Kernel.stubs(:`).with("svn st").returns("?      new_file\nM      modified_file\n?      new_file2\n")
     Kernel.expects(:`).with("svn add \"new_file\"")
     Kernel.expects(:`).with("svn add \"new_file2\"")
     output = capture_stdout do
@@ -65,7 +65,7 @@ class SvnRakeTest < Test::Unit::TestCase
   end
 
   test "svn:delete removes deleted files and displays message" do
-    Kernel.stubs(:`).with("svn st").returns("!      removed_file\n!      removed_file2\n")
+    Kernel.stubs(:`).with("svn st").returns("!      removed_file\n?      new_file\n!      removed_file2\n")
     Kernel.expects(:`).with("svn up \"removed_file\" && svn rm \"removed_file\"")
     Kernel.expects(:`).with("svn up \"removed_file2\" && svn rm \"removed_file2\"")
     output = capture_stdout do

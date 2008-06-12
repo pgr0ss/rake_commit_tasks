@@ -1,8 +1,10 @@
 namespace :svn do
+  desc "display svn status"
   task :st do
     puts %x[svn st]
   end
 
+  desc "svn up and check for conflicts"
   task :up do
     status = %x[svn up]
     puts status
@@ -11,6 +13,7 @@ namespace :svn do
     end
   end
 
+  desc "add new files to svn"
   task :add do
     %x[svn st].split("\n").each do |line|
       if new_file?(line) && !svn_conflict_file?(line)
@@ -29,6 +32,7 @@ namespace :svn do
     line =~ /\.r\d+$/ || line =~ /\.mine$/
   end
   
+  desc "remove deleted files from svn"
   task :delete do
     %x[svn st].split("\n").each do |line|
       if line[0,1] == "!"
