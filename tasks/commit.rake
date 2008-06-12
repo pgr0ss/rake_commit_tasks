@@ -18,7 +18,7 @@ task :commit => :pc do
 end
 
 def files_to_check_in?
-  %x[svn st --ignore-externals].split(/\n/).reject {|line| line[0,1] =~ /X/}.any?
+  %x[svn st --ignore-externals].split("\n").reject {|line| line[0,1] == "X"}.any?
 end
 
 def retrieve_saved_data attribute
