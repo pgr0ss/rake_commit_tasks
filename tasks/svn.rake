@@ -38,4 +38,5 @@ namespace :svn do
       end
     end
   end
+  task :rm => "svn:delete"
 end
