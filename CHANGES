@@ -10,3 +10,6 @@ Started with the code at Jay Field's blog: http://blog.jayfields.com/2006/12/rub
 * Store previous pair and message in system temp path instead of source tree
 * Properly handle missing directories by first restoring them and then svn removing them
 * Handle file names with spaces by quoting the svn commands
+* Prompt for a story number
+* Refactor saved data handling
+* Separate metadata gathered from the prompt with pipes for easier commit message parsing

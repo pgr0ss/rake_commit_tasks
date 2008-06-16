@@ -9,11 +9,21 @@ task :pc => ['svn:add', 'svn:delete', 'svn:up', :default, 'svn:st']
 desc "Run to check in"
 task :commit => :pc do
   if files_to_check_in? && ok_to_check_in?
-    commit_pair = retrieve_saved_data "pair"
-    commit_message = retrieve_saved_data "message"
-    command = %[svn ci -m "#{commit_pair.chomp} - #{commit_message.chomp}"]
+    command = %[svn ci -m "#{CommitMessage.prompt.to_s}"]
     puts command
     puts %x[#{command}]
+  end
+end
+
+class CommitMessage < Struct.new(:who, :story, :what)
+  def self.prompt
+    new retrieve_saved_data("pair"),
+        retrieve_saved_data("story"),
+        retrieve_saved_data("message")
+  end
+  
+  def to_s
+    "#{who}|story #{story}|#{what}"
   end
 end
 
@@ -21,23 +31,25 @@ def files_to_check_in?
   %x[svn st --ignore-externals].split("\n").reject {|line| line[0,1] == "X"}.any?
 end
 
-def retrieve_saved_data attribute
+def retrieve_saved_data(attribute)
   data_path = File.expand_path(Dir.tmpdir + "/#{attribute}.data")
   `touch #{data_path}` unless File.exist? data_path
   saved_data = File.read(data_path)
 
-  puts "last #{attribute}: " + saved_data unless saved_data.chomp.empty?
+  prompt = "#{attribute}"
+  prompt << " (previously #{saved_data})" unless saved_data.empty?
+  prompt << ": "
 
-  input = Readline.readline("#{attribute}: ")
-  while (saved_data.chomp.empty? && (input.chomp.empty?))
-    input = Readline.readline("#{attribute}: ", true)
+  input = Readline.readline(prompt).chomp # The message ultimately committed is chomped anyway.
+  while (saved_data.empty? && (input.empty?))
+    input = Readline.readline(prompt, true)
   end
-  if input.chomp.any?
+  if input.any?
     File.open(data_path, "w") { |file| file << input }
   else
-    puts "using: " + saved_data.chomp
+    puts "using: " + saved_data
   end
-  input.chomp.any? ? input : saved_data
+  input.any? ? input : saved_data
 end
 
 def ok_to_check_in?
@@ -46,9 +58,9 @@ def ok_to_check_in?
   when :passing
     true
   when :failing
-    accept?("The build is currently broken.") 
+    are_you_sure?("The build is currently broken.") 
   when :cannot_connect
-    accept?("Cannot read cruisecontrol.rb information")
+    are_you_sure?("Cannot read cruisecontrol.rb information.")
   end
 end
 
@@ -64,7 +76,7 @@ def build_status
   end
 end
 
-def accept?(message)
+def are_you_sure?(message)
   puts "\n", message
   input = ""
   while (input.strip.empty?)
