@@ -3,6 +3,8 @@ require 'open-uri'
 require 'rexml/document'
 require 'tmpdir'
 
+require File.expand_path(File.dirname(__FILE__) + '/commit_message')
+
 desc "Run before checking in"
 task :pc => ['svn:add', 'svn:delete', 'svn:up', :default, 'svn:st']
 
@@ -18,18 +20,6 @@ task :ci do
     puts %x[#{command}]
   end
 end
-
-class CommitMessage < Struct.new(:who, :id, :what)
-  def self.prompt
-    new retrieve_saved_data("pair", "bg/pg"),
-        retrieve_saved_data("feature", "story 83"),
-        retrieve_saved_data("message", "Refactored GodClass")
-  end
-  
-  def to_s
-    "#{who} - #{id} - #{what}"
-  end
-end unless defined?(CommitMessage) # Protect against multiple requires.
 
 def files_to_check_in?
   %x[svn st --ignore-externals].split("\n").reject {|line| line[0,1] == "X"}.any?

@@ -6,9 +6,9 @@ namespace :svn do
 
   desc "svn up and check for conflicts"
   task :up do
-    status = %x[svn up]
-    puts status
-    status.each do |line|
+    output = %x[svn up]
+    puts output
+    output.each do |line|
       raise "SVN conflict detected. Please resolve conflicts before proceeding." if line[0,1] == "C"
     end
   end
@@ -43,4 +43,16 @@ namespace :svn do
     end
   end
   task :rm => "svn:delete"
+  
+  desc "reverts all files in svn and deletes new files"
+  task :revert_all do
+    system "svn revert -R ."
+    %x[svn st].split("\n").each do |line|
+      next unless line[0,1] == '?'
+      filename = line[1..-1].strip
+      puts "removed #{filename}"
+      File.delete(filename)
+    end
+  end
+
 end

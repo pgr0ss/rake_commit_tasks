@@ -26,6 +26,15 @@ module Kernel
     Kernel.send :`, command
   end
   
-  alias_method :backtick_without_hook, :`
   alias_method :`, :backtick_with_hook
+  
+  def self.system(command)
+    raise "need to stub: Kernel.system(#{command.inspect})"
+  end
+  
+  def system_with_hook(command)
+    Kernel.send :system, command
+  end
+  
+  alias_method :system, :system_with_hook
 end

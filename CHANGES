@@ -13,3 +13,4 @@ Started with the code at Jay Field's blog: http://blog.jayfields.com/2006/12/rub
 * Prompt for a story number
 * Show example at prompt if there is no previously entered data
 * Refactor saved data handling
+* Added a svn:revert_all task which reverts all modified files and deletes all new files

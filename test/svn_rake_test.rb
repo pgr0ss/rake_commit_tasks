@@ -74,4 +74,14 @@ class SvnRakeTest < Test::Unit::TestCase
     assert_equal "removed removed_file\nremoved removed_file2\n", output
   end
   
+  test "svn:revert_all calls svn revert and then removes all new files" do
+    Kernel.expects(:system).with('svn revert -R .')
+    Kernel.expects(:`).with("svn st").returns("?    some_file.rb\n?    another file.txt")
+    File.expects(:delete).with("some_file.rb")
+    File.expects(:delete).with("another file.txt")
+    capture_stdout do
+      Rake::Task["svn:revert_all"].execute nil
+    end
+  end
+  
 end
