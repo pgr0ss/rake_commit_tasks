@@ -52,26 +52,17 @@ end
 
 def ok_to_check_in?
   return true unless self.class.const_defined?(:CCRB_RSS)
-  case build_status
-  when :passing
-    true
-  when :failing
-    are_you_sure?("The build is currently broken.") 
-  when :cannot_connect
-    are_you_sure?("Cannot read cruisecontrol.rb information.")
+  
+  unless build_status.pass?
+    are_you_sure?( "Build FAILURES: #{build_status.failures.join(', ')}" )
   end
 end
 
 def build_status
-  begin
-    build_rss = open(CCRB_RSS).read
-    doc = REXML::Document.new(build_rss)
-    build_title = REXML::XPath.first(doc, '//rss/channel/item/title').text
-    return build_title.include?("failed") ? :failing : :passing
-  rescue Exception => e
-    puts "\n", e.message
-    return :cannot_connect
-  end
+  CruiseStatus.parse_feed CCRB_RSS
+rescue Exception => e
+  puts "\n", e.message
+  return nil
 end
 
 def are_you_sure?(message)
