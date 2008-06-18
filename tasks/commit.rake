@@ -4,6 +4,7 @@ require 'rexml/document'
 require 'tmpdir'
 
 require File.expand_path(File.dirname(__FILE__) + '/commit_message')
+require File.expand_path(File.dirname(__FILE__) + '/cruise_status')
 
 desc "Run before checking in"
 task :pc => ['svn:add', 'svn:delete', 'svn:up', :default, 'svn:st']
@@ -52,10 +53,8 @@ end
 
 def ok_to_check_in?
   return true unless self.class.const_defined?(:CCRB_RSS)
-  
-  unless build_status.pass?
-    are_you_sure?( "Build FAILURES: #{build_status.failures.join(', ')}" )
-  end
+
+  build_status.pass? ? true : are_you_sure?( "Build FAILURES: #{build_status.failures.join(', ')}" )
 end
 
 def build_status
