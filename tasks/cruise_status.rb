@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby -KU
-
 require "rubygems"
 
 begin
@@ -19,8 +18,11 @@ end
 
 class CruiseStatus
   
-  def self.parse_cruise_feed( feed_url )
+  def self.parse_feed( feed_url )
     new open( feed_url )
+  rescue Exception => e
+    @failures = [e.message]
+    new ""
   end
   
   def initialize( project_feed )
@@ -40,7 +42,7 @@ class CruiseStatus
   end
   
   def failures
-    (@doc/"item/title").select { |element|
+    @failures ||= (@doc/"item/title").select { |element|
       element.inner_text =~ /failed$/
     }.map do |element|
       element.inner_text.gsub( /(.*) build \d+ failed$/, '\1' )
@@ -49,7 +51,7 @@ class CruiseStatus
 end
 
 if __FILE__ == $PROGRAM_NAME
-  status = CruiseStatus.parse_cruise_feed ARGV.first
+  status = CruiseStatus.parse_feed ARGV.first
 
   if status.fail?
     puts "FAIL: #{status.failures.join(', ')}"
