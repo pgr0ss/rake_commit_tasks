@@ -26,31 +26,6 @@ def files_to_check_in?
   %x[svn st --ignore-externals].split("\n").reject {|line| line[0,1] == "X"}.any?
 end
 
-def retrieve_saved_data(attribute, for_example)
-  data_path = File.expand_path(Dir.tmpdir + "/#{attribute}.data")
-  `touch #{data_path}` unless File.exist? data_path
-  saved_data = File.read(data_path)
-
-  prompt = "#{attribute}"
-  if saved_data.empty?
-    prompt << " (for example, '#{for_example}')"
-  else
-    prompt << " (previously '#{saved_data}')"
-  end
-  prompt << ": "
-
-  input = Readline.readline(prompt).chomp
-  while (saved_data.empty? && (input.empty?))
-    input = Readline.readline(prompt, true)
-  end
-  if input.any?
-    File.open(data_path, "w") { |file| file << input }
-  else
-    puts "using: " + saved_data
-  end
-  input.any? ? input : saved_data
-end
-
 def ok_to_check_in?
   return true unless self.class.const_defined?(:CCRB_RSS)
   cruise_status = CruiseStatus.new(CCRB_RSS)
