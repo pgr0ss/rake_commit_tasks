@@ -7,40 +7,48 @@ desc "Run before checking in"
 task :pc => ['svn:add', 'svn:delete', 'svn:up', :default, 'svn:st']
 
 desc "Run to check in"
-task :commit => :pc do
+task :commit => [:pc, :ci]
+
+desc "Check in code, prompting for metadata"
+task :ci do
   if files_to_check_in? && ok_to_check_in?
+    puts %x[svn st --ignore-externals]
     command = %[svn ci -m "#{CommitMessage.prompt.to_s}"]
     puts command
     puts %x[#{command}]
   end
 end
 
-class CommitMessage < Struct.new(:who, :story, :what)
+class CommitMessage < Struct.new(:who, :id, :what)
   def self.prompt
-    new retrieve_saved_data("pair"),
-        retrieve_saved_data("story"),
-        retrieve_saved_data("message")
+    new retrieve_saved_data("pair", "bg/pg"),
+        retrieve_saved_data("feature", "story 83"),
+        retrieve_saved_data("message", "Refactored GodClass")
   end
   
   def to_s
-    "#{who}|story #{story}|#{what}"
+    "#{who} - #{story} - #{what}"
   end
-end
+end unless defined?(CommitMessage) # Protect against multiple requires.
 
 def files_to_check_in?
   %x[svn st --ignore-externals].split("\n").reject {|line| line[0,1] == "X"}.any?
 end
 
-def retrieve_saved_data(attribute)
+def retrieve_saved_data(attribute, for_example)
   data_path = File.expand_path(Dir.tmpdir + "/#{attribute}.data")
   `touch #{data_path}` unless File.exist? data_path
   saved_data = File.read(data_path)
 
   prompt = "#{attribute}"
-  prompt << " (previously #{saved_data})" unless saved_data.empty?
+  if saved_data.empty?
+    prompt << " (for example, '#{for_example}')"
+  else
+    prompt << " (previously '#{saved_data}')"
+  end
   prompt << ": "
 
-  input = Readline.readline(prompt).chomp # The message ultimately committed is chomped anyway.
+  input = Readline.readline(prompt).chomp
   while (saved_data.empty? && (input.empty?))
     input = Readline.readline(prompt, true)
   end
