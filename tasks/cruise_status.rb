@@ -23,7 +23,7 @@ class CruiseStatus
     @failures ||= REXML::XPath.match(@doc, "//item/title").select { |element|
       element.text =~ /failed$/
     }.map do |element|
-      element.text.gsub( /(.*) build \d+ failed$/, '\1' )
+      element.text.gsub( /(.*) build (.+) failed$/, '\1' )
     end
   end
 end
