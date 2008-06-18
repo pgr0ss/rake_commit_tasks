@@ -53,15 +53,8 @@ end
 
 def ok_to_check_in?
   return true unless self.class.const_defined?(:CCRB_RSS)
-
-  build_status.pass? ? true : are_you_sure?( "Build FAILURES: #{build_status.failures.join(', ')}" )
-end
-
-def build_status
-  CruiseStatus.parse_feed CCRB_RSS
-rescue Exception => e
-  puts "\n", e.message
-  return nil
+  cruise_status = CruiseStatus.new(CCRB_RSS)
+  cruise_status.pass? ? true : are_you_sure?( "Build FAILURES: #{cruise_status.failures.join(', ')}" )
 end
 
 def are_you_sure?(message)

@@ -1,5 +1,4 @@
-require "test/unit"
-
+require File.expand_path(File.dirname(__FILE__) + "/test_helper")
 require File.expand_path(File.dirname(__FILE__) + "/../tasks/cruise_status")
 
 FAIL_RESPONSE = <<-EOS
@@ -57,7 +56,8 @@ EOS
 class TestCruiseStatusFail < Test::Unit::TestCase
   
   def setup
-    @cruise_checker = CruiseStatus.new FAIL_RESPONSE
+    CruiseStatus.any_instance.expects(:open).with('ccrb.rss').returns(stub(:read => FAIL_RESPONSE))
+    @cruise_checker = CruiseStatus.new 'ccrb.rss'
   end
   
   def test_failed_projects_are_parsed_correctly
@@ -76,7 +76,8 @@ end
 class TestCruiseStatusPass < Test::Unit::TestCase
   
   def setup
-    @cruise_checker = CruiseStatus.new PASS_RESPONSE
+    CruiseStatus.any_instance.expects(:open).with('ccrb.rss').returns(stub(:read => PASS_RESPONSE))
+    @cruise_checker = CruiseStatus.new 'ccrb.rss'
   end
   
   def test_passing_projects_are_parsed_correctly
@@ -89,5 +90,18 @@ class TestCruiseStatusPass < Test::Unit::TestCase
   
   def test_pass_is_true_when_cruise_is_passing
     assert_equal true, @cruise_checker.pass?
+  end
+end
+
+class TestCruiseStatusCannotConnect < Test::Unit::TestCase
+
+  def test_fail_is_true_when_cannot_connect_to_cruise
+    CruiseStatus.any_instance.expects(:open).with('bad_url').raises(Exception, 'Cannot connect')
+    assert_equal true, CruiseStatus.new('bad_url').fail?
+  end
+
+  def test_pass_is_false_when_cannot_connect_to_cruise
+    CruiseStatus.any_instance.expects(:open).with('bad_url').raises(Exception, 'Cannot connect')
+    assert_equal false, CruiseStatus.new('bad_url').pass?
   end
 end
