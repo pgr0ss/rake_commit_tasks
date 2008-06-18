@@ -27,7 +27,7 @@ class CommitMessage < Struct.new(:who, :id, :what)
   end
   
   def to_s
-    "#{who} - #{story} - #{what}"
+    "#{who} - #{id} - #{what}"
   end
 end unless defined?(CommitMessage) # Protect against multiple requires.
 
