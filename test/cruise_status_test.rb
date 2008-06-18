@@ -82,10 +82,6 @@ class TestCruiseStatusFail < Test::Unit::TestCase
     assert_equal %w{failed}, @cruise_checker.failures
   end
     
-  def test_fail_is_true_when_cruise_is_failed
-    assert_equal true, @cruise_checker.fail?
-  end
-  
   def test_pass_is_false_when_cruise_is_failed
     assert_equal false, @cruise_checker.pass?
   end
@@ -114,21 +110,12 @@ class TestCruiseStatusPass < Test::Unit::TestCase
     assert_equal [], @cruise_checker.failures
   end
   
-  def test_fail_is_false_when_cruise_is_passing
-    assert_equal false, @cruise_checker.fail?
-  end
-  
   def test_pass_is_true_when_cruise_is_passing
     assert_equal true, @cruise_checker.pass?
   end
 end
 
 class TestCruiseStatusCannotConnect < Test::Unit::TestCase
-
-  def test_fail_is_true_when_cannot_connect_to_cruise
-    CruiseStatus.any_instance.expects(:open).with('bad_url').raises(Exception, 'Cannot connect')
-    assert_equal true, CruiseStatus.new('bad_url').fail?
-  end
 
   def test_pass_is_false_when_cannot_connect_to_cruise
     CruiseStatus.any_instance.expects(:open).with('bad_url').raises(Exception, 'Cannot connect')

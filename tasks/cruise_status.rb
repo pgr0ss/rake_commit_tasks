@@ -10,13 +10,9 @@ class CruiseStatus
     @failures = [e.message]
     @doc = REXML::Document.new("")
   end
-  
-  def fail?
-    not failures.empty?
-  end
-  
+
   def pass?
-    not fail?
+    failures.empty?
   end
   
   def failures
