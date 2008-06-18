@@ -1,6 +1,6 @@
 require "test/unit"
 
-require "../tasks/cruise_checker"
+require File.expand_path(File.dirname(__FILE__) + "/../tasks/cruise_status")
 
 FAIL_RESPONSE = <<-EOS
 <rss version="2.0">
