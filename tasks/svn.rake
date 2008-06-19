@@ -51,7 +51,7 @@ namespace :svn do
       next unless line[0,1] == '?'
       filename = line[1..-1].strip
       puts "removed #{filename}"
-      File.delete(filename)
+      rm_r filename
     end
   end
 

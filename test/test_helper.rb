@@ -1,7 +1,7 @@
 unless defined?(TEST_HELPER_LOADED)
   TEST_HELPER_LOADED = true
-  require "rubygems"
 
+  require "rubygems"
   require "rake"
   Dir.glob(File.dirname(__FILE__) + "/../tasks/**/*.rake").each { |rakefile| load rakefile }
 
@@ -40,4 +40,6 @@ unless defined?(TEST_HELPER_LOADED)
   
     alias_method :system, :system_with_hook
   end
+  
+  MAIN = self
 end
