@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + "/test_helper"
 class SvnRakeTest < Test::Unit::TestCase
   
   test "svn:st displays svn status" do
-    Kernel.stubs(:`).with("svn st").returns("output from svn st")
+    MAIN.stubs(:`).with("svn st").returns("output from svn st")
     output = capture_stdout do
       Rake::Task["svn:st"].execute nil
     end
@@ -11,7 +11,7 @@ class SvnRakeTest < Test::Unit::TestCase
   end
   
   test "svn:up displays output from svn" do
-    Kernel.stubs(:`).with("svn up").returns("output from svn up")
+    MAIN.stubs(:`).with("svn up").returns("output from svn up")
     output = capture_stdout do
       Rake::Task["svn:up"].execute nil
     end
@@ -19,7 +19,7 @@ class SvnRakeTest < Test::Unit::TestCase
   end
   
   test "svn:up raises if there are conflicts" do
-    Kernel.stubs(:`).with("svn up").returns("C      a_conflicted_file\n")
+    MAIN.stubs(:`).with("svn up").returns("C      a_conflicted_file\n")
     begin
       capture_stdout do
         Rake::Task["svn:up"].execute nil
@@ -31,9 +31,9 @@ class SvnRakeTest < Test::Unit::TestCase
   end
   
   test "svn:add adds new files and displays message" do
-    Kernel.stubs(:`).with("svn st").returns("?      new_file\nM      modified_file\n?      new_file2\n")
-    Kernel.expects(:`).with("svn add \"new_file\"")
-    Kernel.expects(:`).with("svn add \"new_file2\"")
+    MAIN.stubs(:`).with("svn st").returns("?      new_file\nM      modified_file\n?      new_file2\n")
+    MAIN.expects(:`).with("svn add \"new_file\"")
+    MAIN.expects(:`).with("svn add \"new_file2\"")
     output = capture_stdout do
       Rake::Task["svn:add"].execute nil
     end
@@ -41,19 +41,19 @@ class SvnRakeTest < Test::Unit::TestCase
   end
 
   test "svn:add adds files with special characters in them" do
-    Kernel.stubs(:`).with("svn st").returns("?       leading_space\n?      x\"x\n?      y?y\n?      z'z\n")
-    Kernel.expects(:`).with(%Q(svn add " leading_space"))
-    Kernel.expects(:`).with(%Q(svn add "x\\\"x"))
-    Kernel.expects(:`).with(%Q(svn add "y?y"))
-    Kernel.expects(:`).with(%Q(svn add "z'z"))
+    MAIN.stubs(:`).with("svn st").returns("?       leading_space\n?      x\"x\n?      y?y\n?      z'z\n")
+    MAIN.expects(:`).with(%Q(svn add " leading_space"))
+    MAIN.expects(:`).with(%Q(svn add "x\\\"x"))
+    MAIN.expects(:`).with(%Q(svn add "y?y"))
+    MAIN.expects(:`).with(%Q(svn add "z'z"))
     capture_stdout do
       Rake::Task["svn:add"].execute nil
     end
   end
   
   test "svn:add does not add svn conflict files" do
-    Kernel.expects(:`).never
-    Kernel.stubs(:`).with("svn st").returns("?      new_file.r342\n?      new_file.mine")
+    MAIN.expects(:`).never
+    MAIN.stubs(:`).with("svn st").returns("?      new_file.r342\n?      new_file.mine")
     output = capture_stdout do
       Rake::Task["svn:add"].execute nil
     end
@@ -65,9 +65,9 @@ class SvnRakeTest < Test::Unit::TestCase
   end
 
   test "svn:delete removes deleted files and displays message" do
-    Kernel.stubs(:`).with("svn st").returns("!      removed_file\n?      new_file\n!      removed_file2\n")
-    Kernel.expects(:`).with("svn up \"removed_file\" && svn rm \"removed_file\"")
-    Kernel.expects(:`).with("svn up \"removed_file2\" && svn rm \"removed_file2\"")
+    MAIN.stubs(:`).with("svn st").returns("!      removed_file\n?      new_file\n!      removed_file2\n")
+    MAIN.expects(:`).with("svn up \"removed_file\" && svn rm \"removed_file\"")
+    MAIN.expects(:`).with("svn up \"removed_file2\" && svn rm \"removed_file2\"")
     output = capture_stdout do
       Rake::Task["svn:delete"].execute nil
     end
@@ -75,8 +75,8 @@ class SvnRakeTest < Test::Unit::TestCase
   end
   
   test "svn:revert_all calls svn revert and then removes all new files and directories" do
-    Kernel.expects(:system).with('svn revert -R .')
-    Kernel.expects(:`).with("svn st").returns("?    some_file.rb\n?    a directory")
+    MAIN.expects(:system).with('svn revert -R .')
+    MAIN.expects(:`).with("svn st").returns("?    some_file.rb\n?    a directory")
     MAIN.expects(:rm_r).with("some_file.rb")
     MAIN.expects(:rm_r).with("a directory")
     capture_stdout do

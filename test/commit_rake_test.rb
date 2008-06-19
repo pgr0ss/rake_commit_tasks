@@ -8,7 +8,7 @@ class CommitRakeTest < Test::Unit::TestCase
   end
   
   test "commit does nothing if no files to check in" do
-    Kernel.stubs(:`).returns("")
+    MAIN.stubs(:`).returns("")
     output = capture_stdout do
       Rake::Task["commit"].execute nil
     end
@@ -16,7 +16,7 @@ class CommitRakeTest < Test::Unit::TestCase
   end
 
   test "commit ignores svn externals when checking for files to check in" do
-    Kernel.stubs(:`).with("svn st --ignore-externals").returns("X      an_external\n")
+    MAIN.stubs(:`).with("svn st --ignore-externals").returns("X      an_external\n")
     output = capture_stdout do
       Rake::Task["commit"].execute nil
     end
@@ -24,7 +24,7 @@ class CommitRakeTest < Test::Unit::TestCase
   end
   
   test "commit prompts for pair and message" do
-    Kernel.stubs(:`).with("svn st --ignore-externals").returns("A      a_new_file\n")
+    MAIN.stubs(:`).with("svn st --ignore-externals").returns("A      a_new_file\n")
     output = capture_stdout do
       Rake::Task["commit"].execute nil
     end

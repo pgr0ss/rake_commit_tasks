@@ -19,27 +19,12 @@ unless defined?(TEST_HELPER_LOADED)
     end
   end
 
-  module Kernel
-    def self.`(command)
-      raise "need to stub: Kernel.`(#{command.inspect})"
-    end
-  
-    def backtick_with_hook(command)
-      Kernel.send :`, command
-    end
-  
-    alias_method :`, :backtick_with_hook
-  
-    def self.system(command)
-      raise "need to stub: Kernel.system(#{command.inspect})"
-    end
-  
-    def system_with_hook(command)
-      Kernel.send :system, command
-    end
-  
-    alias_method :system, :system_with_hook
+  MAIN = self
+  def MAIN.`(command)
+    raise "need to stub: MAIN.`(#{command.inspect})"
   end
   
-  MAIN = self
+  def MAIN.system(command)
+    raise "need to stub: MAIN.system(#{command.inspect})"
+  end
 end
