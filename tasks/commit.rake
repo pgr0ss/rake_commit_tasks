@@ -7,18 +7,14 @@ require File.expand_path(File.dirname(__FILE__) + '/commit_message')
 require File.expand_path(File.dirname(__FILE__) + '/cruise_status')
 
 desc "Run before checking in"
-task :pc => ['svn:add', 'svn:delete', 'svn:up', :default, 'svn:st']
+task :pc => ['svn:add', 'svn:delete', 'svn:up', :default]
 
 desc "Run to check in"
-task :commit => [:pc, :ci]
-
-desc "Check in code, prompting for metadata"
-task :ci do
+task :commit => "svn:st" do
+  commit_message = CommitMessage.prompt.to_s
+  Rake::Task[:pc].invoke
   if files_to_check_in? && ok_to_check_in?
-    puts %x[svn st --ignore-externals]
-    command = %[svn ci -m "#{CommitMessage.prompt.to_s}"]
-    puts command
-    puts %x[#{command}]
+    sh "svn ci -m '#{commit_message}'"
   end
 end
 
