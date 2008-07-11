@@ -14,7 +14,7 @@ task :commit => "svn:st" do
   if files_to_check_in?
     commit_message = CommitMessage.prompt.to_s
     Rake::Task[:pc].invoke
-    sh "svn ci -m '#{commit_message}'" if ok_to_check_in?
+    sh "svn ci -m #{commit_message.inspect}" if ok_to_check_in?
   else
     puts "Nothing to commit"
   end
