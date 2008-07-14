@@ -1,9 +1,9 @@
-require 'readline'
 require 'open-uri'
 require 'rexml/document'
 require 'tmpdir'
 
 require File.expand_path(File.dirname(__FILE__) + '/commit_message')
+require File.expand_path(File.dirname(__FILE__) + '/../lib/prompt_line')
 require File.expand_path(File.dirname(__FILE__) + '/cruise_status')
 
 desc "Run before checking in"
@@ -12,7 +12,7 @@ task :pc => ['svn:add', 'svn:delete', 'svn:up', :default]
 desc "Run to check in"
 task :commit => "svn:st" do
   if files_to_check_in?
-    commit_message = CommitMessage.prompt.to_s
+    commit_message = CommitMessage.new.prompt
     Rake::Task[:pc].invoke
     sh "svn ci -m #{commit_message.inspect}" if ok_to_check_in?
   else
