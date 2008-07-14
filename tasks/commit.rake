@@ -1,10 +1,8 @@
-require 'open-uri'
 require 'rexml/document'
-require 'tmpdir'
 
-require File.expand_path(File.dirname(__FILE__) + '/commit_message')
+require File.expand_path(File.dirname(__FILE__) + '/../lib/commit_message')
 require File.expand_path(File.dirname(__FILE__) + '/../lib/prompt_line')
-require File.expand_path(File.dirname(__FILE__) + '/cruise_status')
+require File.expand_path(File.dirname(__FILE__) + '/../lib/cruise_status')
 
 desc "Run before checking in"
 task :pc => ['svn:add', 'svn:delete', 'svn:up', :default]

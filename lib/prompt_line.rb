@@ -1,4 +1,5 @@
 require 'readline'
+require 'tmpdir'
 
 class PromptLine
   
