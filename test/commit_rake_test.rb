@@ -25,4 +25,12 @@ class CommitRakeTest < Test::Unit::TestCase
     assert_equal "", output
   end
   
+  test "commit_command uses the message in an svn ci" do
+    assert_equal %Q{svn ci -m "some message"}, commit_command("some message")
+  end
+  
+  test "commit_command escapes all quotes" do
+    assert_equal %Q{svn ci -m "single ' and double \\""}, commit_command(%Q{single ' and double "})
+  end
+  
 end
