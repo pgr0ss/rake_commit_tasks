@@ -6,13 +6,14 @@ This plugin contains a set of rake tasks for checking your project into subversi
 
 which:
 
-  1. Adds new files to subversion
-  2. Deletes missing files from subversion
-  3. svn update
-  4. Runs the default rake task (which should run your tests)
-  5. Displays svn status
-  6. Checks cruisecontrol.rb to see if the build is passing
-  7. Prompts to check in
+  1. Prompts for a commit message
+  2. Adds new files to subversion
+  3. Deletes missing files from subversion
+  4. svn update
+  5. Runs the default rake task (which should run your tests)
+  6. Displays svn status
+  7. Checks cruisecontrol.rb to see if the build is passing
+  8. Checks in the code
 
 
 The first version started with the code posted at Jay Field's Blog: http://blog.jayfields.com/2006/12/ruby-rake-commit.html
@@ -25,9 +26,22 @@ Improvements have been added in from several more projects.
 
 == Customization
 
+=== Preventing checkins on broken builds
+
 If you want the build to check your cruisecontrol.rb instance and prompt you 
 before checking in on a broken build, set CCRB_RSS to the location of the RSS feed.
 
 For example, in your Rakefile:
 
   CCRB_RSS = 'http://example.com:3333/projects.rss'
+
+=== Automatically merging from branch to trunk
+
+If you want the build to automatically merge changes to the trunk when checking in on the branch, set PATH_TO_TRUNK_WORKING_COPY to the location of the checked out trunk working copy.
+
+For example, in your Rakefile:
+
+  PATH_TO_TRUNK_WORKING_COPY = "/Users/someone/my_project_trunk"
+
+Now, if you have a branch checked out into /Users/someone/my_project_1.1 and you do a rake commit, the checkin will be merged into the trunk after the change is committed to the branch.  Then, you can "cd /Users/someone/my_project_trunk" and check in the merged changes in the trunk.  This behavior is described in more depth at http://www.pgrs.net/2007/10/16/automatically-merge-changes-from-branch-to-trunk
+
