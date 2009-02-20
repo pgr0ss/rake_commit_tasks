@@ -54,5 +54,11 @@ namespace :svn do
       rm_r filename
     end
   end
+  
+  def merge_to_trunk(revision)
+    puts "Merging changes into trunk.  Don't forget to check these in." 
+    sh "svn up #{PATH_TO_TRUNK_WORKING_COPY.inspect}"
+    sh "svn merge -c #{revision} . #{PATH_TO_TRUNK_WORKING_COPY.inspect}"
+  end
 
 end

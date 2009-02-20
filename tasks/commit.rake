@@ -12,7 +12,12 @@ task :commit => "svn:st" do
   if files_to_check_in?
     commit_message = CommitMessage.new.prompt
     Rake::Task[:pc].invoke
-    sh "#{commit_command(commit_message)}" if ok_to_check_in?
+    
+    if ok_to_check_in?
+      output = sh_with_output "#{commit_command(commit_message)}"
+      revision = output.match(/Committed revision (\d+)\./)[1]
+      merge_to_trunk(revision) if `svn info`.include?("branches") && self.class.const_defined?(:PATH_TO_TRUNK_WORKING_COPY)
+    end
   else
     puts "Nothing to commit"
   end
@@ -39,4 +44,12 @@ def are_you_sure?(message)
     input = Readline.readline("Are you sure you want to check in? (y/n): ")
   end
   return input.strip.downcase[0,1] == "y"
+end
+
+def sh_with_output(command)
+  puts command
+  output = `#{command}`
+  puts output
+  raise unless $?.success?
+  output
 end
