@@ -60,5 +60,4 @@ namespace :svn do
     sh "svn up #{PATH_TO_TRUNK_WORKING_COPY.inspect}"
     sh "svn merge -c #{revision} . #{PATH_TO_TRUNK_WORKING_COPY.inspect}"
   end
-
 end

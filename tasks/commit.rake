@@ -4,31 +4,51 @@ require File.expand_path(File.dirname(__FILE__) + '/../lib/commit_message')
 require File.expand_path(File.dirname(__FILE__) + '/../lib/prompt_line')
 require File.expand_path(File.dirname(__FILE__) + '/../lib/cruise_status')
 
-desc "Run before checking in"
-task :pc => ['svn:add', 'svn:delete', 'svn:up', :default]
+def git?
+  `git symbolic-ref HEAD`
+  $?.success?
+end
 
-desc "Run to check in"
-task :commit => "svn:st" do
-  if files_to_check_in?
-    commit_message = CommitMessage.new.prompt
-    Rake::Task[:pc].invoke
-    
+if git?
+  desc "Run to check in"
+  task :commit => ['git:reset_soft', 'git:add', 'git:st'] do
+    commit_message = CommitMessage.new
+    sh_with_output("git config user.name #{commit_message.pair.inspect}")
+    message = "#{commit_message.feature} - #{commit_message.message}"
+    sh_with_output("git commit -m #{message.inspect}")
+    Rake::Task['git:pull_rebase'].invoke
+    Rake::Task[:default].invoke
     if ok_to_check_in?
-      output = sh_with_output "#{commit_command(commit_message)}"
-      revision = output.match(/Committed revision (\d+)\./)[1]
-      merge_to_trunk(revision) if `svn info`.include?("branches") && self.class.const_defined?(:PATH_TO_TRUNK_WORKING_COPY)
+      Rake::Task['git:push'].invoke
     end
-  else
-    puts "Nothing to commit"
   end
-end
+else
+  desc "Run before checking in"
+  task :pc => ['svn:add', 'svn:delete', 'svn:up', :default]
 
-def commit_command(message)
+  desc "Run to check in"
+  task :commit => "svn:st" do
+    if files_to_check_in?
+      message = CommitMessage.new.joined_message
+      Rake::Task[:pc].invoke
+
+      if ok_to_check_in?
+        output = sh_with_output "#{commit_command(message)}"
+        revision = output.match(/Committed revision (\d+)\./)[1]
+        merge_to_trunk(revision) if `svn info`.include?("branches") && self.class.const_defined?(:PATH_TO_TRUNK_WORKING_COPY)
+      end
+    else
+      puts "Nothing to commit"
+    end
+  end
+
+  def commit_command(message)
   "svn ci -m #{message.inspect}"
-end
+  end
 
-def files_to_check_in?
+  def files_to_check_in?
   %x[svn st --ignore-externals].split("\n").reject {|line| line[0,1] == "X"}.any?
+  end
 end
 
 def ok_to_check_in?

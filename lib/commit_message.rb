@@ -1,13 +1,14 @@
 class CommitMessage
-  
-  def prompt
-    prompt_lines = [
-      PromptLine.new("pair", "bg/pg"),
-      PromptLine.new("feature", "story 83"),
-      PromptLine.new("message", "Refactored GodClass")
-    ]
-    
-    messages = prompt_lines.collect {|prompt_line| prompt_line.prompt }
-    messages.join(" - ")
+
+  attr_reader :pair, :feature, :message
+
+  def initialize
+    @pair = PromptLine.new("pair", "bg & pg").prompt
+    @feature = PromptLine.new("feature", "story 83").prompt
+    @message = PromptLine.new("message", "Refactored blah").prompt
+  end
+
+  def joined_message
+    [@pair, @feature, @message].join(' - ')
   end
 end
