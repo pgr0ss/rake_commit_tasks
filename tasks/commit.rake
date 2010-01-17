@@ -5,7 +5,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../lib/prompt_line')
 require File.expand_path(File.dirname(__FILE__) + '/../lib/cruise_status')
 
 def git?
-  `git symbolic-ref HEAD 2>&1`
+  `git symbolic-ref HEAD 2>/dev/null`
   $?.success?
 end
 
