@@ -17,7 +17,7 @@ namespace :svn do
   task :add do
     %x[svn st].split("\n").each do |line|
       if new_file?(line) && !svn_conflict_file?(line)
-        file = line[7..-1]
+        file = line[7..-1].strip
         %x[svn add #{file.inspect}]
         puts %[added #{file}]
       end

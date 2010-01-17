@@ -42,7 +42,7 @@ class SvnRakeTest < Test::Unit::TestCase
 
   test "svn:add adds files with special characters in them" do
     MAIN.stubs(:`).with("svn st").returns("?       leading_space\n?      x\"x\n?      y?y\n?      z'z\n")
-    MAIN.expects(:`).with(%Q(svn add " leading_space"))
+    MAIN.expects(:`).with(%Q(svn add "leading_space"))
     MAIN.expects(:`).with(%Q(svn add "x\\\"x"))
     MAIN.expects(:`).with(%Q(svn add "y?y"))
     MAIN.expects(:`).with(%Q(svn add "z'z"))
