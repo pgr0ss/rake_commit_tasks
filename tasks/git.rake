@@ -15,7 +15,7 @@ namespace :git do
     sh "git add -A ."
   end
 
-  desc "reset soft back to #{git_branch}"
+  desc "reset soft back to origin/branch"
   task :reset_soft do
     raise "Could not determine branch" unless git_branch
     sh "git reset --soft origin/#{git_branch}"
