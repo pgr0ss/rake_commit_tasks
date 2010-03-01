@@ -23,15 +23,15 @@ namespace :svn do
       end
     end
   end
-  
+
   def new_file?(line)
     line[0,1] == "?"
   end
-  
+
   def svn_conflict_file?(line)
     line =~ /\.r\d+$/ || line =~ /\.mine$/
   end
-  
+
   desc "remove deleted files from svn"
   task :delete do
     %x[svn st].split("\n").each do |line|
@@ -43,7 +43,7 @@ namespace :svn do
     end
   end
   task :rm => "svn:delete"
-  
+
   desc "reverts all files in svn and deletes new files"
   task :revert_all do
     system "svn revert -R ."
@@ -54,9 +54,9 @@ namespace :svn do
       rm_r filename
     end
   end
-  
+
   def merge_to_trunk(revision)
-    puts "Merging changes into trunk.  Don't forget to check these in." 
+    puts "Merging changes into trunk.  Don't forget to check these in."
     sh "svn up #{PATH_TO_TRUNK_WORKING_COPY.inspect}"
     sh "svn merge -c #{revision} . #{PATH_TO_TRUNK_WORKING_COPY.inspect}"
   end

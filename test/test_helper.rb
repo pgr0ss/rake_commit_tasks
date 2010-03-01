@@ -6,8 +6,7 @@ unless defined?(TEST_HELPER_LOADED)
   Dir.glob(File.dirname(__FILE__) + "/../lib/tasks/**/*.rake").each { |rakefile| load rakefile }
 
   require "test/unit"
-  gem "dust"; require "dust"
-  gem "mocha"; require "mocha"
+  require "mocha"
 
   Test::Unit::TestCase.class_eval do
     def capture_stdout(&block)

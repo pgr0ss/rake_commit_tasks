@@ -71,52 +71,52 @@ PASS_RESPONSE = <<-EOS
 EOS
 
 class TestCruiseStatusFail < Test::Unit::TestCase
-  
+
   def setup
     CruiseStatus.any_instance.expects(:open).with('ccrb.rss').returns(stub(:read => FAIL_RESPONSE))
     @cruise_checker = CruiseStatus.new 'ccrb.rss'
   end
-  
-  test "failed projects are parsed correctly" do
+
+  def test_failed_projects_are_parsed_correctly
     assert_equal %w{failed}, @cruise_checker.failures
   end
-    
-  test "pass is false when cruise is failed" do
+
+  def test_pass_is_false_when_cruise_is_failed
     assert_equal false, @cruise_checker.pass?
   end
 end
 
 class TestCruiseStatusFailOnPointRevision < Test::Unit::TestCase
-  
+
   def setup
     CruiseStatus.any_instance.expects(:open).with('ccrb.rss').returns(stub(:read => FAIL_RESPONSE_ON_POINT_REVISION))
     @cruise_checker = CruiseStatus.new 'ccrb.rss'
   end
 
-  test "failed projects are parsed correctly with point revisions" do
+  def test_failed_projects_are_parsed_correctly_with_point_revision
     assert_equal %w{my_project}, @cruise_checker.failures
   end
 end
 
 class TestCruiseStatusPass < Test::Unit::TestCase
-  
+
   def setup
     CruiseStatus.any_instance.expects(:open).with('ccrb.rss').returns(stub(:read => PASS_RESPONSE))
     @cruise_checker = CruiseStatus.new 'ccrb.rss'
   end
-  
-  test "passing projects are parsed correctly" do
+
+  def test_passing_projects_are_parsed_correctly
     assert_equal [], @cruise_checker.failures
   end
-  
-  test "test pass is true when cruise is passing" do
+
+  def test_test_pass_is_true_when_cruise_is_passing
     assert_equal true, @cruise_checker.pass?
   end
 end
 
 class TestCruiseStatusCannotConnect < Test::Unit::TestCase
 
-  test "pass is false when cannot connect to cruise" do
+  def test_pass_is_false_when_cannot_connect_to_cruise
     CruiseStatus.any_instance.expects(:open).with('bad_url').raises(Exception, 'Cannot connect')
     assert_equal false, CruiseStatus.new('bad_url').pass?
   end
