@@ -1,8 +1,8 @@
 require 'rexml/document'
 
-require File.expand_path(File.dirname(__FILE__) + '/../lib/commit_message')
-require File.expand_path(File.dirname(__FILE__) + '/../lib/prompt_line')
-require File.expand_path(File.dirname(__FILE__) + '/../lib/cruise_status')
+require File.expand_path(File.dirname(__FILE__) + '/../commit_message')
+require File.expand_path(File.dirname(__FILE__) + '/../prompt_line')
+require File.expand_path(File.dirname(__FILE__) + '/../cruise_status')
 
 def git?
   `git symbolic-ref HEAD 2>/dev/null`
