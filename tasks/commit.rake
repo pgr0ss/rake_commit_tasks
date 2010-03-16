@@ -9,7 +9,20 @@ def git?
   $?.success?
 end
 
-if git?
+def git_svn?
+  `git svn info 2> /dev/null`
+  $?.success?
+end
+
+if git_svn? 
+  desc "Run to check in"
+  task :commit => ['git_svn:check_clean', 'git_svn:rebase',] do
+    if ok_to_check_in?
+      Rake:Task['git_svn:dcommit'].invoke
+    end
+  end
+  
+elsif git?
   desc "Run to check in"
   task :commit => ['git:reset_soft', 'git:add', 'git:st'] do
     commit_message = CommitMessage.new
