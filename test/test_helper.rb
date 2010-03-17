@@ -3,11 +3,10 @@ unless defined?(TEST_HELPER_LOADED)
 
   require "rubygems"
   require "rake"
-  Dir.glob(File.dirname(__FILE__) + "/../tasks/**/*.rake").each { |rakefile| load rakefile }
+  Dir.glob(File.dirname(__FILE__) + "/../lib/tasks/**/*.rake").each { |rakefile| load rakefile }
 
   require "test/unit"
-  gem "dust"; require "dust"
-  gem "mocha"; require "mocha"
+  require "mocha"
 
   Test::Unit::TestCase.class_eval do
     def capture_stdout(&block)
@@ -23,7 +22,7 @@ unless defined?(TEST_HELPER_LOADED)
   def MAIN.`(command)
     raise "need to stub: MAIN.`(#{command.inspect})"
   end
-  
+
   def MAIN.system(command)
     raise "need to stub: MAIN.system(#{command.inspect})"
   end

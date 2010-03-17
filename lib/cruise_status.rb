@@ -2,7 +2,7 @@ require 'rexml/document'
 require "open-uri"
 
 class CruiseStatus
-  
+
   def initialize(feed_url)
     project_feed = open(feed_url).read
     @doc = REXML::Document.new(project_feed)
@@ -14,7 +14,7 @@ class CruiseStatus
   def pass?
     failures.empty?
   end
-  
+
   def failures
     @failures ||= REXML::XPath.match(@doc, "//item/title").select { |element|
       element.text =~ /failed$/
