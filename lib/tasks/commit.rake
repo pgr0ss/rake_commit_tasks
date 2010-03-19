@@ -21,7 +21,7 @@ if git_svn?
   end
    
   desc "Run to check in"
-  task :commit => ['git:reset_soft', 'git:add', 'git:st'] do
+  task :commit => ['git:add', 'git:st'] do
     git_commit_with_message
     Rake::Task['git_svn:rebase'].invoke
     Rake::Task[:default].invoke    
