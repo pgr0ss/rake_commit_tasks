@@ -26,7 +26,7 @@ if git_svn?
     Rake::Task['git_svn:rebase'].invoke
     Rake::Task[:default].invoke    
     if ok_to_check_in?
-      Rake:Task['git_svn:dcommit'].invoke
+      Rake::Task['git_svn:dcommit'].invoke
     end
   end  
 elsif git?
