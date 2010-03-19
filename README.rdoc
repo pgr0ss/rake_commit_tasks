@@ -17,6 +17,16 @@ which does the following, depending on source control:
   7. Checks cruisecontrol.rb to see if the build is passing
   8. Pushes the commit to origin
 
+==== git-svn
+
+  1. Adds new files to git and removes deleted files
+  2. Prompts for a commit message
+  3. Commits to local git
+  4. Pulls changes from SVN
+  5. Runs the default rake task (which should run the tests)
+  6. Checks cruisecontrol.rb to see if the build is passing
+  7. Pushes the commit to SVN
+
 ==== subversion
 
   1. Prompts for a commit message
