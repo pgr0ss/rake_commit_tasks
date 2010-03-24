@@ -17,22 +17,31 @@ end
 if git_svn?
   desc "use to commit manually added changes to staging"
   task :commit_local do
-    git_commit_with_message
+    git_svn_commit_with_message
   end
    
   desc "Run to check in"
   task :commit => ['git:add', 'git:st'] do
-    git_commit_with_message
+    git_svn_commit_with_message
     Rake::Task['git_svn:rebase'].invoke
     Rake::Task[:default].invoke    
     if ok_to_check_in?
       Rake::Task['git_svn:dcommit'].invoke
     end
   end  
+  
+  def git_svn_commit_with_message
+    commit_message = CommitMessage.new
+    message = "#{commit_message.pair} - #{commit_message.feature} - #{commit_message.message}"
+    sh_with_output("git commit -m #{message.inspect}")
+  end
 elsif git?
   desc "Run to check in"
   task :commit => ['git:reset_soft', 'git:add', 'git:st'] do
-    git_commit_with_message
+    commit_message = CommitMessage.new
+    sh_with_output("git config user.name #{commit_message.pair.inspect}")
+    message = "#{commit_message.feature} - #{commit_message.message}"
+    sh_with_output("git commit -m #{message.inspect}")
     Rake::Task['git:pull_rebase'].invoke
     Rake::Task[:default].invoke
     if ok_to_check_in?
