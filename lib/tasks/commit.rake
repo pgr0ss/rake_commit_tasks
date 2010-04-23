@@ -37,16 +37,31 @@ if git_svn?
   end
 elsif git?
   desc "Run to check in"
-  task :commit => ['git:reset_soft', 'git:add', 'git:st'] do
+  task :commit do
+    collapse_git_commits if collapse_git_commits?
+
+    Rake::Task[:default].invoke
+    if ok_to_check_in?
+      Rake::Task['git:push'].invoke
+    end
+  end
+
+  def collapse_git_commits?
+    return true unless merge_commits?
+    Rake::Task["git:st"].execute
+    input = Readline.readline("Are you sure you want to collapse merge commits? (y/n): ").chomp
+    input == "y"
+  end
+
+  def collapse_git_commits
+    Rake::Task["git:reset_soft"].execute
+    Rake::Task["git:add"].execute
+    Rake::Task["git:st"].invoke
     commit_message = CommitMessage.new
     sh_with_output("git config user.name #{commit_message.pair.inspect}")
     message = "#{commit_message.feature} - #{commit_message.message}"
     sh_with_output("git commit -m #{message.inspect}")
     Rake::Task['git:pull_rebase'].invoke
-    Rake::Task[:default].invoke
-    if ok_to_check_in?
-      Rake::Task['git:push'].invoke
-    end
   end
 else
   desc "Run before checking in"
