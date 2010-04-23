@@ -3,9 +3,8 @@ require 'tmpdir'
 
 class PromptLine
 
-  def initialize(attribute, example)
+  def initialize(attribute)
     @attribute = attribute
-    @example = example
   end
 
   def prompt
@@ -26,8 +25,9 @@ class PromptLine
 
   def message
     previous = saved_data
-    hint = previous.empty? ? "for example, #{@example.inspect}" : "previously, #{previous.inspect}"
-    "#{@attribute} (#{hint}): "
+    message = "\n"
+    message += "previous #{@attribute}: #{previous}\n" if previous.any?
+    message + "#{@attribute}: "
   end
 
   def save(input)
