@@ -4,7 +4,7 @@ namespace :git_svn do
   task :rebase do
     sh "git svn rebase"
   end
-  
+
   desc "dcommit to main svn repo"
   task :dcommit do
     sh "git svn dcommit"
