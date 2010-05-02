@@ -49,7 +49,7 @@ elsif git?
   def collapse_git_commits?
     return true unless merge_commits?
     Rake::Task["git:st"].execute
-    input = Readline.readline("Are you sure you want to collapse merge commits? (y/n): ").chomp
+    input = Readline.readline("Do you want to collapse merge commits? (y/n): ").chomp
     input == "y"
   end
 
