@@ -1,5 +1,7 @@
 = rake_commit_tasks
 
+*Note*: This project has been deprecated, and is superseded by https://github.com/pgr0ss/rake_commit
+
 This plugin contains a set of rake tasks for checking your project into source control (git or subversion).  The most important is:
 
   rake commit
